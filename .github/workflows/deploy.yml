@@ -35,6 +35,12 @@ jobs:
           GITHUB_PAGES: "true"
           NEXT_PUBLIC_SITE_URL: https://innovacion-eam.github.io/emdecob
       
+      - name: Fix asset paths for basePath
+        run: node scripts/fix-asset-paths.mjs
+      
+      - name: Generate SEO files (sitemap, robots)
+        run: node scripts/generate-seo.mjs
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
