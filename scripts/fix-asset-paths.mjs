@@ -7,53 +7,51 @@ const basePath = "/emdecob";
 function processHtmlFile(filePath) {
   let fileContent = fs.readFileSync(filePath, "utf8");
   
-  // Split into RSC payload and HTML portion
   const htmlStart = fileContent.indexOf("<!DOCTYPE html>");
-  if (htmlStart === -1) return;
+  const rscPayload = htmlStart >= 0 ? fileContent.substring(0, htmlStart) : "";
+  const htmlContent = htmlStart >= 0 ? fileContent.substring(htmlStart) : fileContent;
   
-  const rscPayload = fileContent.substring(0, htmlStart);
-  const htmlContent = fileContent.substring(htmlStart);
+  // RSC payload patterns (with escaped quotes \")
+  let fixedRsc = rscPayload;
+  // Pattern: "/images/xxx\"  (note: backslash-quote at end)
+  fixedRsc = fixedRsc.replace(new RegExp('"\\\\/images\\\\/[^"\\\\]*"\\\\"', 'g'), (m) => m.replace('"/images/', `"/${basePath}/images/`));
+  fixedRsc = fixedRsc.replace(new RegExp('"\\\\/videos\\\\/[^"\\\\]*"\\\\"', 'g'), (m) => m.replace('"/videos/', `"/${basePath}/videos/`));
+  // Pattern: "poster":"/images/xxx\"
+  fixedRsc = fixedRsc.replace(new RegExp('"poster":"\\\\/images\\\\/[^"\\\\]*"\\\\"', 'g'), (m) => m.replace('"/images/', `"/${basePath}/images/`));
+  fixedRsc = fixedRsc.replace(new RegExp('"src":"\\\\/images\\\\/[^"\\\\]*"\\\\"', 'g'), (m) => m.replace('"/images/', `"/${basePath}/images/`));
+  fixedRsc = fixedRsc.replace(new RegExp('"src":"\\\\/videos\\\\/[^"\\\\]*"\\\\"', 'g'), (m) => m.replace('"/videos/', `"/${basePath}/videos/`));
+  // Pattern with space: "poster": "/images/xxx\"
+  fixedRsc = fixedRsc.replace(new RegExp('"poster": "\\\\/images\\\\/[^"\\\\]*"\\\\"', 'g'), (m) => m.replace('"/images/', `"/${basePath}/images/`));
+  fixedRsc = fixedRsc.replace(new RegExp('"src": "\\\\/images\\\\/[^"\\\\]*"\\\\"', 'g'), (m) => m.replace('"/images/', `"/${basePath}/images/`));
+  fixedRsc = fixedRsc.replace(new RegExp('"src": "\\\\/videos\\\\/[^"\\\\]*"\\\\"', 'g'), (m) => m.replace('"/videos/', `"/${basePath}/videos/`));
   
-  // Fix RSC payload paths (JSON-like format with escaped quotes)
-  // Pattern: "/images/xxx.webp\"," -> "/emdecob/images/xxx.webp\","
-  let fixedRsc = rscPayload
-    .replace(/"\/images\//g, `"/${basePath}/images/`)
-    .replace(/"\/videos\//g, `"/${basePath}/videos/`);
+  // HTML content patterns
+  let fixedHtml = htmlContent;
+  fixedHtml = fixedHtml.replace(/src="\/images\//g, `src="${basePath}/images/`);
+  fixedHtml = fixedHtml.replace(/src="\/videos\//g, `src="${basePath}/videos/`);
+  fixedHtml = fixedHtml.replace(/poster="\/images\//g, `poster="${basePath}/images/`);
+  fixedHtml = fixedHtml.replace(/href="\/images\//g, `href="${basePath}/images/`);
+  fixedHtml = fixedHtml.replace(/href="\/videos\//g, `href="${basePath}/videos/`);
+  fixedHtml = fixedHtml.replace(/src='\/images\//g, `src='${basePath}/images/`);
+  fixedHtml = fixedHtml.replace(/src='\/videos\//g, `src='${basePath}/videos/`);
+  fixedHtml = fixedHtml.replace(/href='\/images\//g, `href='${basePath}/images/`);
+  fixedHtml = fixedHtml.replace(/href='\/videos\//g, `href='${basePath}/videos/`);
   
-  // Fix HTML content (standard attributes)
-  let fixedHtml = htmlContent
-    .replace(/src="\/images\//g, `src="${basePath}/images/`)
-    .replace(/src="\/videos\//g, `src="${basePath}/videos/`)
-    .replace(/poster="\/images\//g, `poster="${basePath}/images/`)
-    .replace(/href="\/images\//g, `href="${basePath}/images/`)
-    .replace(/href="\/videos\//g, `href="${basePath}/videos/`);
-  
-  // Fix preload links and other HTML attributes with single quotes or no quotes
-  fixedHtml = fixedHtml
-    .replace(/href='\/images\//g, `href='${basePath}/images/`)
-    .replace(/href='\/videos\//g, `href='${basePath}/videos/`);
-  
-  // Fix JSON-LD image URLs
-  fixedHtml = fixedHtml
-    .replace(/"url": "https:\/\/emdecob\.com\/images\//g, `"url": "https://innovacion-eam.github.io${basePath}/images/`)
-    .replace(/"url": "\/images\//g, `"url": "${basePath}/images/`);
+  // JSON-LD
+  fixedHtml = fixedHtml.replace(/"url": "https:\/\/emdecob\.com\/images\//g, `"url": "https://innovacion-eam.github.io${basePath}/images/`);
+  fixedHtml = fixedHtml.replace(/"url": "\/images\//g, `"url": "${basePath}/images/`);
   
   fs.writeFileSync(filePath, fixedRsc + fixedHtml, "utf8");
 }
 
 function processDirectory(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    
-    if (entry.isDirectory()) {
-      processDirectory(fullPath);
-    } else if (entry.name.endsWith(".html")) {
-      processHtmlFile(fullPath);
-    }
+    if (entry.isDirectory()) processDirectory(fullPath);
+    else if (entry.name.endsWith(".html")) processHtmlFile(fullPath);
   }
 }
 
 processDirectory(outDir);
-console.log("✅ Fixed asset paths in all HTML files (including RSC payload format)");
+console.log("✅ Fixed asset paths in all HTML files");
