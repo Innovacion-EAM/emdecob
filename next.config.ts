@@ -1,10 +1,17 @@
 import type { NextConfig } from "next";
 
+const isGithubPages = process.env.GITHUB_PAGES === "true";
+
 const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
   poweredByHeader: false,
   trailingSlash: true,
+  // GitHub Pages config
+  ...(isGithubPages && {
+    basePath: "/emdecob",
+    assetPrefix: "/emdecob/",
+  }),
   async redirects() {
     return [
       { source: "/inicio", destination: "/", statusCode: 301 },
