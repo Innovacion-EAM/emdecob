@@ -1,0 +1,18 @@
+import puppeteer from "puppeteer-core";
+const browser=await puppeteer.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+const page=await browser.newPage();
+page.on('response',r=>{ if(r.url().includes('aliado')) console.log('RESP',r.status(),r.url()); });
+page.on('requestfailed',r=>{ if(r.url().includes('aliado')) console.log('FAIL',r.failure()?.errorText,r.url()); });
+await page.setViewport({width:1440,height:1000});
+await page.goto('http://localhost:3000/',{waitUntil:'networkidle0'});
+let before=await page.$$eval('.marquee img',imgs=>imgs.slice(0,3).map(i=>({src:i.getAttribute('src'),cur:i.currentSrc,c:i.complete,n:i.naturalWidth,loading:i.loading,rect:(()=>{const r=i.getBoundingClientRect();return {t:r.top,b:r.bottom,l:r.left,r:r.right}})()})));
+console.log('before',before);
+await page.evaluate(()=>document.querySelector('.allies').scrollIntoView());
+await new Promise(r=>setTimeout(r,1500));
+let after=await page.$$eval('.marquee img',imgs=>imgs.slice(0,3).map(i=>({cur:i.currentSrc,c:i.complete,n:i.naturalWidth})));
+console.log('after',after);
+await page.evaluate(async()=>{for(let y=0;y<document.body.scrollHeight;y+=500){window.scrollTo(0,y);await new Promise(r=>setTimeout(r,100));}});
+await new Promise(r=>setTimeout(r,1000));
+let end=await page.$$eval('.marquee img',imgs=>imgs.map(i=>({c:i.complete,n:i.naturalWidth,src:i.currentSrc.slice(-40)})).slice(0,5));
+console.log('end',end);
+await browser.close();
