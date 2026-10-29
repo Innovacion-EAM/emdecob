@@ -1,5 +1,8 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import {
   ArrowUpRight,
   Clock,
@@ -12,30 +15,12 @@ import { ContactForm } from "@/components/ContactForm";
 import { PageHero } from "@/components/PageHero";
 import { company } from "@/content/site";
 
-export const metadata: Metadata = {
-  title: "Contacto",
-  description:
-    "Hable con EMDECOB: Contact Center, cartera, propiedad horizontal, jurídico y EMDATA. Armenia, Quindío. WhatsApp 324 618 0051.",
-  alternates: { canonical: "/contacto/" },
-  openGraph: {
-    title: "Contacto · EMDECOB",
-    description:
-      "Cuéntenos qué necesita resolver. Le ayudamos a encontrar la ruta más clara.",
-    url: "/contacto/",
-    images: [{ url: "/images/img-apoyo-contacto-emdecob-web-1.webp" }],
-  },
-};
-
-type PageProps = {
-  searchParams: Promise<{ tab?: string }>;
-};
-
 const mapEmbed =
   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4717.774109132816!2d-75.664231!3d4.5537702!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e38f4fb7fb4e289%3A0xb8266769b9fd95da!2sEmdecob!5e1!3m2!1ses-419!2sco!4v1764276622673!5m2!1ses-419!2sco";
 
-export default async function ContactPage({ searchParams }: PageProps) {
-  const { tab } = await searchParams;
-  const initialTab = tab === "empleo" || tab === "talento" ? "empleo" : "comercial";
+function ContactContent() {
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") === "empleo" || searchParams.get("tab") === "talento" ? "empleo" : "comercial";
 
   return (
     <>
@@ -161,5 +146,13 @@ export default async function ContactPage({ searchParams }: PageProps) {
         </div>
       </section>
     </>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={<div className="section section--white"><div className="container"><div className="contact-intro" data-reveal><span className="eyebrow">Contacto</span><h2 className="h2">Cuéntenos qué necesita.</h2><p className="lede" style={{marginTop:18}}>Cargando...</p></div></div></div>}>
+      <ContactContent />
+    </Suspense>
   );
 }

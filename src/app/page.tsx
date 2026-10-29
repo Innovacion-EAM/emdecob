@@ -37,7 +37,19 @@ const faqJsonLd = {
 export default function HomePage() {
   return (
     <>
-      <section className="hero">
+            <section className="hero hero--video">
+        <div className="hero__video" aria-hidden="true">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster="/images/founders-emdecob-web.webp"
+            preload="metadata"
+          >
+            <source src="/videos/hero.mp4" type="video/mp4" />
+          </video>
+        </div>
         <div className="container hero__grid">
           <div className="hero__copy" data-reveal>
             <span className="eyebrow">
@@ -53,7 +65,7 @@ export default function HomePage() {
             </p>
             <div className="actions">
               <Link className="btn btn--primary" href="/contacto/">
-                Hablemos de tu operación
+                Hablemos
                 <ArrowUpRight aria-hidden="true" />
               </Link>
               <Link className="btn btn--outline" href="/nosotros/">
@@ -75,37 +87,10 @@ export default function HomePage() {
               </span>
             </div>
           </div>
-
-          <div className="hero__visual" data-reveal>
-            <div className="hero__frame" aria-hidden="true" />
-            <div className="hero__sticker" aria-hidden="true">
-              <strong>2006</strong>
-              <span>desde entonces</span>
-            </div>
-            <div className="hero__image">
-              <Image
-                src="/images/founders-emdecob-web.webp"
-                alt="Fundadores y equipo directivo de EMDECOB"
-                width={901}
-                height={701}
-                priority
-                sizes="(max-width: 980px) 92vw, 44vw"
-              />
-            </div>
-            <div className="hero__caption">
-              <div>
-                <strong>Un equipo. Cuatro capacidades.</strong>
-                <span>Contact center · cartera · jurídico · datos</span>
-              </div>
-              <Link href="/servicios/" aria-label="Ver los servicios de EMDECOB">
-                <ArrowUpRight aria-hidden="true" />
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
 
-      <section className="allies" aria-label="Aliados de EMDECOB">
+<section className="allies" aria-label="Aliados de EMDECOB">
         <div className="container allies__inner">
           <p className="allies__label">
             Aliados reconocidos en los sectores público, privado y mixto
@@ -127,7 +112,13 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      
+
+
+</section>
+
+
+      
 
       <section className="section section--white" id="servicios">
         <div className="container">
@@ -163,90 +154,45 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="stats-band" aria-label="EMDECOB en cifras">
-        <div className="container stats-grid">
-          {stats.map((stat) => (
-            <div className="stat" key={stat.label} data-reveal>
-              <strong>{stat.value}</strong>
-              <span>{stat.label}</span>
-              <p>{stat.detail}</p>
-            </div>
-          ))}
+      <section className="manifiesto" aria-labelledby="manifiesto-title">
+        <div className="manifiesto__video" aria-hidden="true">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster="/images/cover-video-presentacion-emdecob-web.webp"
+            preload="metadata"
+          >
+            <source src="/videos/manifiesto.mp4" type="video/mp4" />
+          </video>
         </div>
-      </section>
-
-      <section className="section trust-section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="Resultados"
-            title="La confianza se construye con resultados."
-            description="Nuestros clientes destacan la efectividad de la gestión, el acompañamiento cercano y la tranquilidad de tener una operación ordenada."
-            light
-          />
-
-          <div className="trust-grid">
-            {testimonials.map((testimonial) => (
-              <div className="testimonial" key={testimonial.name} data-reveal>
-                <div className="stars" aria-label="5 de 5 estrellas">
-                  ★★★★★
-                </div>
-                <blockquote>“{testimonial.quote}”</blockquote>
-                <footer>
-                  <div>
-                    <strong>{testimonial.name}</strong>
-                    <span>{testimonial.role}</span>
-                  </div>
-                  <Check aria-hidden="true" />
-                </footer>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section data-feature">
-        <div className="container data-feature__grid">
-          <div data-reveal>
-            <span className="eyebrow eyebrow--light">EMDATA</span>
-            <h2 className="h2 data-feature__title">
-              Los datos no sirven si no se convierten en decisiones.
+        <div className="container manifiesto__grid">
+          <div className="manifiesto__content" data-reveal>
+            <span className="eyebrow">Manifiesto</span>
+            <h2 id="manifiesto-title" className="display h2">
+              Operar con convicción.<br /> Medir con honestidad.
             </h2>
-            <p className="lede lede--light">
-              EMDATA integra cartera, gestión jurídica, Contact Center y
-              finanzas en un solo tablero. Una lectura clara para saber qué
-              está pasando y qué mover.
+            <p className="lede">
+              No nos mueve el volumen, nos mueve el resultado bien hecho.
+              Cada llamada, cada acuerdo, cada expediente tiene un nombre
+              y una historia detrás. Por eso integramos operación, derecho
+              y datos: para que la ejecución no sea ciega.
             </p>
-            <ul className="data-feature__list">
-              {[
-                "Cartera, recaudo y acuerdos en tiempo real.",
-                "Gestión de Contact Center y tiempos de respuesta.",
-                "Procesos jurídicos y fechas críticas.",
-                "Reportes claros para dirección y comités.",
-              ].map((item) => (
-                <li key={item}>
-                  <Check aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <div className="actions">
-              <Link className="btn btn--bright" href="/emdata/">
-                Conoce EMDATA
+            <div className="manifiesto__actions">
+              <Link className="btn btn--primary" href="/nosotros/">
+                Nuestra historia
                 <ArrowUpRight aria-hidden="true" />
               </Link>
-              <Link className="btn btn--ghost" href="/contacto/">
-                Solicita una demo
+              <Link className="btn btn--outline" href="/contacto/">
+                Hablemos
               </Link>
             </div>
-          </div>
-
-          <div data-reveal>
-            <DashboardMock />
           </div>
         </div>
       </section>
 
-      <section className="section section--paper">
+<section className="section section--paper">
         <div className="container">
           <SectionHeading
             eyebrow="Cómo trabajamos"
@@ -266,67 +212,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section section--white">
-        <div className="container about-grid">
-          <div className="about-media" data-reveal>
-            <div className="about-media__image">
-              <Image
-                src="/images/cover-video-presentacion-emdecob-web.webp"
-                alt="Equipo de EMDECOB en Armenia, Quindío"
-                width={1200}
-                height={900}
-                sizes="(max-width: 980px) 100vw, 48vw"
-              />
-            </div>
-            <div className="about-media__badge">
-              <strong>2006</strong>
-              <span>fortaleciendo la región desde el Quindío</span>
-            </div>
-          </div>
-
-          <div className="about-copy" data-reveal>
-            <span className="eyebrow">Nosotros</span>
-            <h2 className="h2">
-              Una empresa familiar que opera como un aliado estratégico.
-            </h2>
-            <p className="lede">
-              Nacimos en 2006 con la convicción de transformar la cobranza
-              en un proceso humano, transparente y respaldado por la innovación.
-            </p>
-            <p className="muted" style={{ marginTop: 16, fontSize: 13 }}>
-              Hoy integramos Contact Center, tecnología y respaldo jurídico para
-              acompañar a empresas y copropiedades con soluciones eficientes y
-              humanas. Operamos desde Armenia para Colombia.
-            </p>
-            <div className="about-points">
-              <div className="about-point">
-                <strong>Contact Center como eje</strong>
-                <span>Articulamos cartera y propiedad horizontal con cercanía y resultados.</span>
-              </div>
-              <div className="about-point">
-                <strong>Tecnología con propósito</strong>
-                <span>EMDATA da trazabilidad, control y análisis a cada proceso.</span>
-              </div>
-              <div className="about-point">
-                <strong>Respaldo jurídico</strong>
-                <span>Seguridad, transparencia y soluciones integrales.</span>
-              </div>
-              <div className="about-point">
-                <strong>Visión de región</strong>
-                <span>Talento local, estándares nacionales y relaciones de largo plazo.</span>
-              </div>
-            </div>
-            <div className="actions">
-              <Link className="btn btn--outline" href="/nosotros/">
-                Conoce nuestra historia
-                <ArrowUpRight aria-hidden="true" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section section--paper">
+            <section className="section section--paper">
         <div className="container">
           <SectionHeading
             eyebrow="Conocimiento"
