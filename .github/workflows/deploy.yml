@@ -38,42 +38,14 @@ jobs:
       - name: Fix asset paths for basePath
         run: node scripts/fix-asset-paths.mjs
       
+      - name: Generate static redirect pages
+        run: node scripts/generate-redirects.mjs
+      
       - name: Generate SEO files (sitemap, robots)
         run: node scripts/generate-seo.mjs
       
       - name: Verify critical assets exist
-        run: |
-          echo "🔍 Verifying critical assets in out/..."
-          
-          # Videos (hero + manifiesto)
-          test -f out/videos/hero.mp4 && echo "✅ hero.mp4" || { echo "❌ MISSING hero.mp4"; exit 1; }
-          test -f out/videos/manifiesto.mp4 && echo "✅ manifiesto.mp4" || { echo "❌ MISSING manifiesto.mp4"; exit 1; }
-          
-          # Fonts (Sora + Manrope)
-          test -f out/fonts/sora-latin.woff2 && echo "✅ sora-latin.woff2" || { echo "❌ MISSING sora-latin.woff2"; exit 1; }
-          test -f out/fonts/sora-latin-ext.woff2 && echo "✅ sora-latin-ext.woff2" || { echo "❌ MISSING sora-latin-ext.woff2"; exit 1; }
-          test -f out/fonts/manrope-latin.woff2 && echo "✅ manrope-latin.woff2" || { echo "❌ MISSING manrope-latin.woff2"; exit 1; }
-          test -f out/fonts/manrope-latin-ext.woff2 && echo "✅ manrope-latin-ext.woff2" || { echo "❌ MISSING manrope-latin-ext.woff2"; exit 1; }
-          
-          # Key images
-          test -f out/images/founders-emdecob-web.webp && echo "✅ founders-emdecob-web.webp" || { echo "❌ MISSING founders-emdecob-web.webp"; exit 1; }
-          test -f out/images/cover-video-presentacion-emdecob-web.webp && echo "✅ cover-video-presentacion-emdecob-web.webp" || { echo "❌ MISSING cover-video-presentacion-emdecob-web.webp"; exit 1; }
-          test -f out/images/logo.webp && echo "✅ logo.webp" || { echo "❌ MISSING logo.webp"; exit 1; }
-          
-          # Count totals
-          VIDEO_COUNT=$(ls out/videos/*.mp4 2>/dev/null | wc -l)
-          FONT_COUNT=$(ls out/fonts/*.woff2 2>/dev/null | wc -l)
-          IMG_COUNT=$(ls out/images/ 2>/dev/null | wc -l)
-          
-          echo "📊 Total videos: $VIDEO_COUNT (expected 2)"
-          echo "📊 Total fonts: $FONT_COUNT (expected 4)"
-          echo "📊 Total images: $IMG_COUNT (expected 39)"
-          
-          [ "$VIDEO_COUNT" -eq 2 ] || { echo "❌ Video count mismatch"; exit 1; }
-          [ "$FONT_COUNT" -eq 4 ] || { echo "❌ Font count mismatch"; exit 1; }
-          [ "$IMG_COUNT" -eq 39 ] || { echo "❌ Image count mismatch (got $IMG_COUNT)"; exit 1; }
-          
-          echo "✅ All critical assets verified"
+        run: node scripts/check-assets.mjs
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

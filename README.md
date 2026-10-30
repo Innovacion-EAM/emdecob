@@ -44,8 +44,33 @@ npm run dev
 
 # 5) Build de producción
 npm run build
-npm start   # sirve el build en http://localhost:3000
+# El export estático queda en out/ (sirve esa carpeta con cualquier servidor estático)
+
+# 6) Build + post-proceso para GitHub Pages (basePath /emdecob)
+npm run build:pages
 ```
+
+> `next start` no funciona con `output: "export"`. Para revisar el build local:
+> `npx serve out` o `python3 -m http.server -d out 3000`.
+
+---
+
+## Despliegue en GitHub Pages
+
+El sitio se publica en `https://innovacion-eam.github.io/emdecob/`, así que el
+build usa `basePath: "/emdecob"`. Next.js **no** prefija automáticamente las
+rutas de `public/` que se usan en `next/image`, `<video>`, `poster` o `url()`
+del CSS. Por eso:
+
+- En el código, todas las rutas de `public/` se envuelven con `asset()` de
+  `src/lib/asset.ts` (usa `NEXT_PUBLIC_BASE_PATH`, definido en `next.config.ts`).
+- `scripts/fix-asset-paths.mjs` reescribe los `url()` del CSS compilado.
+- `scripts/generate-redirects.mjs` genera páginas 301 estáticas (los
+  `redirects()` de Next no se aplican con `output: "export"`).
+- `scripts/check-assets.mjs` falla el build si queda una ruta sin prefijar o si
+  una imagen/video/fuente referenciada no existe en `out/`.
+
+El workflow `.github/workflows/deploy.yml` ejecuta todo en ese orden.
 
 ---
 
@@ -111,7 +136,10 @@ emdecob-web/
 
 ## Redirecciones heredadas (HTTP 301)
 
-Configuradas en `next.config.ts`:
+Definidas en `scripts/redirects.json` (fuente única). En desarrollo las aplica
+`next.config.ts`; en el export estático `scripts/generate-redirects.mjs` crea una
+página de redirección por cada origen (y las rutas dinámicas se resuelven desde
+`404.html`).
 
 | Origen | Destino |
 |--------|---------|
@@ -136,6 +164,9 @@ Configuradas en `next.config.ts`:
   - `RESEND_API_KEY` configurado → envía correo HTML a `CONTACT_TO_EMAIL` con `reply_to` del usuario.
   - Sin clave → modo **prototipo local**: valida, loggea en consola y responde `{ ok: true, mode: "local" }`.
 - **Frontend**: pestañas accesibles (`role="group"`, `aria-pressed`), checkbox con enlace a política de privacidad, estados `idle | sending | success | error`.
+- **En GitHub Pages (estático)**: el endpoint no existe. El formulario detecta la
+  respuesta no-JSON y ofrece enviar la misma información por correo (`mailto:`)
+  o WhatsApp, sin perder los datos escritos.
 
 ---
 

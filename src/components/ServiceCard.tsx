@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Service } from "@/content/services";
+import { asset } from "@/lib/asset";
 
 type ServiceCardProps = {
   service: Service;
@@ -17,7 +18,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
     >
       <div className="service-card__media">
         <Image
-          src={service.image}
+          src={asset(service.image)}
           alt={service.imageAlt}
           width={900}
           height={560}

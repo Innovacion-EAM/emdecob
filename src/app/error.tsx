@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function ErrorPage({
   error,
@@ -28,9 +29,9 @@ export default function ErrorPage({
           <button className="btn btn--primary" type="button" onClick={reset}>
             Intentar de nuevo
           </button>
-          <a className="btn btn--outline" href="/contacto/">
+          <Link className="btn btn--outline" href="/contacto/">
             Ir a contacto
-          </a>
+          </Link>
         </div>
       </div>
     </section>

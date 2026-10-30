@@ -16,6 +16,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { ServiceCard } from "@/components/ServiceCard";
 import { services } from "@/content/services";
 import { posts } from "@/content/posts";
+import { asset } from "@/lib/asset";
 import {
   allies,
   faqs,
@@ -44,10 +45,10 @@ export default function HomePage() {
             muted
             loop
             playsInline
-            poster="/images/founders-emdecob-web.webp"
+            poster={asset("/images/founders-emdecob-web.webp")}
             preload="metadata"
           >
-            <source src="/videos/hero.mp4" type="video/mp4" />
+            <source src={asset("/videos/hero.mp4")} type="video/mp4" />
           </video>
         </div>
         <div className="container hero__grid">
@@ -100,7 +101,7 @@ export default function HomePage() {
               {[...allies, ...allies].map((logo, index) => (
                 <Image
                   key={`${logo.src}-${index}`}
-                  src={logo.src}
+                  src={asset(logo.src)}
                   alt={index < allies.length ? logo.alt : ""}
                   aria-hidden={index >= allies.length}
                   width={172}
@@ -161,10 +162,10 @@ export default function HomePage() {
             muted
             loop
             playsInline
-            poster="/images/cover-video-presentacion-emdecob-web.webp"
+            poster={asset("/images/cover-video-presentacion-emdecob-web.webp")}
             preload="metadata"
           >
-            <source src="/videos/manifiesto.mp4" type="video/mp4" />
+            <source src={asset("/videos/manifiesto.mp4")} type="video/mp4" />
           </video>
         </div>
         <div className="container manifiesto__grid">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { asset } from "@/lib/asset";
 
 type Crumb = { label: string; href?: string };
 
@@ -59,7 +60,7 @@ export function PageHero({
           {image && (
             <div className="page-hero__media">
               <Image
-                src={image}
+                src={asset(image)}
                 alt={imageAlt}
                 width={900}
                 height={760}

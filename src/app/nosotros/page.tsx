@@ -13,6 +13,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { JsonLd } from "@/components/JsonLd";
+import { asset } from "@/lib/asset";
 import {
   company,
   stats,
@@ -175,7 +176,7 @@ export default function AboutPage() {
           <div className="about-media" data-reveal>
             <div className="about-media__image">
               <Image
-                src="/images/img-apoyo-about-emdecob-web-1.webp"
+                src={asset("/images/img-apoyo-about-emdecob-web-1.webp")}
                 alt="Equipo de EMDECOB"
                 width={900}
                 height={800}

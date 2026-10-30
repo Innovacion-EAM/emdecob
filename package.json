@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:pages": "GITHUB_PAGES=true NEXT_PUBLIC_SITE_URL=https://innovacion-eam.github.io/emdecob next build && node scripts/fix-asset-paths.mjs && node scripts/generate-redirects.mjs && node scripts/generate-seo.mjs && node scripts/check-assets.mjs",
+    "check:assets": "node scripts/check-assets.mjs",
     "start": "next start",
     "lint": "eslint ."
   },

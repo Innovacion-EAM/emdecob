@@ -3,8 +3,36 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowUpRight, Check, Loader2, ShieldCheck } from "lucide-react";
+import { company } from "@/content/site";
+import { asset } from "@/lib/asset";
 
 type Tab = "comercial" | "empleo";
+
+function buildMailto(data: FormData): string {
+  const fields: Array<[string, FormDataEntryValue | null]> = [
+    ["Tipo", data.get("tipo")],
+    ["Nombre", data.get("nombre")],
+    ["Empresa", data.get("empresa")],
+    ["Cargo", data.get("cargo")],
+    ["Correo", data.get("correo")],
+    ["Teléfono", data.get("telefono")],
+    ["Servicio", data.get("servicio")],
+    ["LinkedIn", data.get("linkedin")],
+    ["Mensaje", data.get("mensaje")],
+  ];
+
+  const body = fields
+    .filter(([, value]) => typeof value === "string" && value.trim() !== "")
+    .map(([label, value]) => `${label}: ${value}`)
+    .join("\n");
+
+  const kind = data.get("tipo") === "empleo" ? "talento" : "comercial";
+  const subject = `Solicitud desde el sitio web (${kind})`;
+
+  return `mailto:${company.email}?subject=${encodeURIComponent(
+    subject,
+  )}&body=${encodeURIComponent(body)}`;
+}
 
 type ContactFormProps = {
   initialTab?: Tab;
@@ -16,20 +44,28 @@ export function ContactForm({ initialTab = "comercial" }: ContactFormProps) {
     "idle",
   );
   const [error, setError] = useState("");
+  const [mailto, setMailto] = useState<string | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
+    const formData = new FormData(form);
+    formData.set("tipo", tab);
     setStatus("sending");
     setError("");
+    setMailto(null);
 
     try {
-      const formData = new FormData(form);
-      formData.set("tipo", tab);
-      const response = await fetch("/api/contacto/", {
+      const response = await fetch(asset("/api/contacto/"), {
         method: "POST",
         body: formData,
       });
+      const contentType = response.headers.get("content-type") ?? "";
+      // En hosting estático (GitHub Pages) el endpoint no existe y la respuesta
+      // no es JSON. En ese caso ofrecemos enviar el mismo contenido por correo.
+      if (!contentType.includes("application/json")) {
+        throw new Error("static-hosting");
+      }
       const result = (await response.json()) as { ok?: boolean; error?: string };
       if (!response.ok || !result.ok) {
         throw new Error(result.error ?? "No pudimos enviar la solicitud.");
@@ -38,11 +74,18 @@ export function ContactForm({ initialTab = "comercial" }: ContactFormProps) {
       form.reset();
     } catch (submitError) {
       setStatus("error");
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "No pudimos enviar la solicitud.",
-      );
+      if (submitError instanceof Error && submitError.message === "static-hosting") {
+        setMailto(buildMailto(formData));
+        setError(
+          "Este sitio no tiene servidor de correo, así que el formulario no puede enviarse automáticamente. Puede mandarnos la misma información por correo o WhatsApp:",
+        );
+      } else {
+        setError(
+          submitError instanceof Error
+            ? submitError.message
+            : "No pudimos enviar la solicitud.",
+        );
+      }
     }
   }
 
@@ -221,9 +264,32 @@ export function ContactForm({ initialTab = "comercial" }: ContactFormProps) {
         </div>
 
         {status === "error" && (
-          <p className="form-status" role="alert" style={{ color: "#a12d2d" }}>
-            {error}
-          </p>
+          <>
+            <p className="form-status" role="alert" style={{ color: "#a12d2d" }}>
+              {error}
+            </p>
+            {mailto && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 12 }}>
+                <a className="btn btn--primary btn--sm" href={mailto}>
+                  Enviar por correo
+                  <ArrowUpRight aria-hidden="true" />
+                </a>
+                <a
+                  className="btn btn--outline btn--sm"
+                  href={company.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Escribir por WhatsApp
+                </a>
+              </div>
+            )}
+            {mailto && tab === "empleo" && (
+              <p className="field-hint" style={{ marginTop: 8 }}>
+                Si adjuntó hoja de vida, recuerde añadirla manualmente al correo.
+              </p>
+            )}
+          </>
         )}
       </form>
     </div>

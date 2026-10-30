@@ -6,6 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import { PostCard } from "./PostCard";
 import type { Post } from "@/content/posts";
+import { asset } from "@/lib/asset";
 
 export function BlogExplorer({ posts }: { posts: Post[] }) {
   const categories = ["Todas", ...new Set(posts.map((post) => post.category))];
@@ -41,7 +42,7 @@ export function BlogExplorer({ posts }: { posts: Post[] }) {
         >
           <div className="blog-featured__media">
             <Image
-              src={featured.cover}
+              src={asset(featured.cover)}
               alt={featured.coverAlt}
               width={1200}
               height={820}

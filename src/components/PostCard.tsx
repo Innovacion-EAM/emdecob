@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Post } from "@/content/posts";
+import { asset } from "@/lib/asset";
 
 export function PostCard({
   post,
@@ -18,7 +19,7 @@ export function PostCard({
     >
       <div className="post-card__media">
         <Image
-          src={post.cover}
+          src={asset(post.cover)}
           alt={post.coverAlt}
           width={900}
           height={560}

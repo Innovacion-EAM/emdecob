@@ -8,6 +8,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { JsonLd } from "@/components/JsonLd";
 import { PostCard } from "@/components/PostCard";
 import { getPost, posts } from "@/content/posts";
+import { asset } from "@/lib/asset";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -91,7 +92,7 @@ export default async function PostPage({ params }: PageProps) {
 
           <div className="article-cover">
             <Image
-              src={post.cover}
+              src={asset(post.cover)}
               alt={post.coverAlt}
               width={1600}
               height={840}
