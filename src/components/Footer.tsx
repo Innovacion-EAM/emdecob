@@ -2,12 +2,22 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   Clock,
+  Facebook,
+  Instagram,
+  Linkedin,
   Mail,
   MapPin,
+  MessageCircle,
   Phone,
 } from "lucide-react";
 import { company } from "@/content/site";
 import { Logo } from "./Logo";
+
+const socialIcons = {
+  LinkedIn: Linkedin,
+  Instagram: Instagram,
+  Facebook: Facebook,
+} as const;
 
 const footerNav = [
   {
@@ -62,6 +72,33 @@ export function Footer() {
                 <Clock aria-hidden="true" />
                 {company.hours}
               </span>
+            </div>
+
+            <div className="footer-social" aria-label="Redes sociales">
+              {company.social.map((social) => {
+                const Icon = socialIcons[social.label as keyof typeof socialIcons];
+                return (
+                  <a
+                    key={social.href}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                    className="footer-social__link"
+                  >
+                    {Icon && <Icon aria-hidden="true" size={18} />}
+                  </a>
+                );
+              })}
+              <a
+                href={company.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                className="footer-social__link"
+              >
+                <MessageCircle aria-hidden="true" size={18} />
+              </a>
             </div>
           </div>
 
